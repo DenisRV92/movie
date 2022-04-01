@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
+use Mockery\Exception\InvalidOrderException;
+//use Symfony\Component\HttpKernel\Exception\HttpException;
+//use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -37,5 +41,7 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
     }
+
 }

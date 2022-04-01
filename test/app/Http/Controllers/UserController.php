@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\GeneralJsonException;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -25,36 +27,72 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::get();
-//        return view('article_category.index', compact('articleCategories'));
-        return view('home',compact('users'));
+
+//        $users = User::all();
+        try {
+            $users = User::all();
+            return view('home', compact('users'));
+        } catch (\Exception $e) {
+            throw new GeneralJsonException('INTERNAL_ERROR');
+        }
+
+
     }
-    public function edit($id)
+
+    public function edit()
     {
-        $user = User::findOrFail($id);
-        return view('edit', compact('user'));
+        try {
+            $myId = Auth::user()->id;
+            $user = User::findOrFail($myId);
+            return view('edit', compact('user'));
+        } catch (\Exception $e) {
+            throw new GeneralJsonException('INTERNAL_ERROR');
+        }
     }
+
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $this->validate($request, [
-            'name' => 'string|max:255|unique:users,name,'.$user->id,
-//            'name' => ['string', 'max:255', 'nullable'],
-            'username' => 'required|regex:/^[a-z]+$/i|string|max:255|unique:users',
-        ]);
+        try {
+            $user = User::findOrFail($id);
+            $name = $this->validate($request, [
+                'name' => 'string|max:255|nullable|unique:users,name,' . $user->id,
+                'username' => 'string|regex:/^[a-z]+$/i|max:255|unique:users,name,' . $user->id,
+            ]);
 
-        $user->fill($request->all());
-        $user->save();
-        return redirect()
-            ->route('index');
+            $user->fill($request->all());
+            $user->save();
+            return redirect()
+                ->route('index');
+        } catch (\Exception $e) {
+            throw new GeneralJsonException('INTERNAL_ERROR');
+        }
     }
+
     public function destroy($id)
     {
-        // DELETE — идемпотентный метод, поэтому результат операции всегда один и тот же
-        $user = User::find($id);
-        if ($user) {
-            $user->delete();
+//        print_r($id);
+//        exit();
+        try {
+            $user = User::find($id);
+            if ($user) {
+                $user->delete();
+            }
+            return redirect()->route('index');
+        } catch (\Exception $e) {
+            throw new GeneralJsonException('INTERNAL_ERROR');
         }
-        return redirect()->route('index');
+    }
+
+    public function show(Request $request, $id)
+    {
+        try {
+            $header = $request->header()['user-id'];
+            if ($header) {
+                $user = User::findOrFail($id);
+                return view('show', compact('user'));
+            }
+        } catch (\Exception $e) {
+            throw new GeneralJsonException('INTERNAL_ERROR');
+        }
     }
 }

@@ -66,13 +66,14 @@
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                    <a class="dropdown-item" href="{{ route('home.edit', $user) }}"
+                                    <a class="dropdown-item" href="{{ route('home.edit', $user=Auth::user()->id) }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('edit-form').submit();">
                                         {{ __('Edit') }}
                                     </a>
-                                    <form id="edit-form" action="{{ route('home.edit', $user) }}" method="POST" class="d-none">
+                                    <form id="edit-form" action="{{ route('home.edit', $user=Auth::user()->id) }}" method="post" class="d-none">
                                         @csrf
+{{--                                        @method('PATCH')--}}
                                     </form>
                                 </div>
                             </li>

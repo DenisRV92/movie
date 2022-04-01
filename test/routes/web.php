@@ -1,7 +1,9 @@
 <?php
 
+//use App\Http\Middleware\AddHeaders;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{UserController};
+use App\Http\Controllers\{FilmController, UserController};
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,8 +15,11 @@ use App\Http\Controllers\{UserController};
 |
 */
 
-Route::get('/', [UserController::class, 'index'])
-    ->name('index');
+//Route::get('/', [UserController::class, 'index'])
+//    ->name('index');
+Route::get('/', function () {
+    return redirect('/home');
+});
 
 Route::post('home/{id}/edit', [UserController::class, 'edit'])
     ->name('home.edit');
@@ -24,23 +29,28 @@ Route::patch('/home/{id}', [UserController::class, 'update'])
 
 Route::delete('home/{id}', [UserController::class, 'destroy'])
     ->name('home.destroy');
-//Route::get('articles', [ArticleController::class, 'index'])
-//    ->name('articles.index');
 
-//Route::get('articles/{id}', [ArticleController::class, 'show'])
-//    ->name('articles.show');
+Route::get('home/user/{id}', [UserController::class, 'show'])->middleware('myHeader')
+    ->name('home.show');
 
-// BEGIN (write your solution here)
-//Route::get('articles/create', 'ArticleCategoryController@store')
-//    ->name('articles.store');
-// END
 
-//Route::get('article_categories', [ArticleCategoryController::class, 'index'])
-//    ->name('article_categories.index');
-//
-//Route::get('article_categories/{id}', [ArticleCategoryController::class, 'show'])
-//    ->name('article_categories.show');
+
+Route::get('/movie', [FilmController::class, 'index'])
+    ->name('movie.index');
+
+Route::get('/movie/{id}',[FilmController::class, 'add'])
+    ->name('movie.add');
+
+Route::get('/favorites',[FilmController::class, 'showFavorites'])
+    ->name('favorites');
+
+Route::get('/noFavorites',[FilmController::class, 'showNoFavorites'])
+    ->name('noFavorites');
+
+Route::delete('favorites/{id}', [FilmController::class, 'destroy'])
+    ->name('favorites.destroy');
+
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\UserController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\UserController::class, 'index'])->name('index');

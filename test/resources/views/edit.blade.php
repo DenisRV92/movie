@@ -1,19 +1,23 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-{{ Form::model($user, ['method' => 'PATCH','url' => route('home.update', $user)]) }}
-      {{ Form::label('name', 'name') }}
-      {{ Form::text('name') }}<br>
-      {{ Form::label('username', 'username') }}
-      {{ Form::text('username') }}<br>
-    {{ Form::submit('Обновить') }}
- {{ Form::close() }}
-</body>
-</html>
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <form class="form-inline" action="{{route('home.update', $user)}}" method="post">
+            <div class="mb-3 row">
+                <label for="name" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="name" value={{$user->name}}>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-10">
+                    <input type="text" name="username" class="form-control" value={{$user->username}}>
+                </div>
+            </div>
+            @csrf
+            @method('PATCH')
+            <input type="submit" class="btn btn-primary" value="edit">
+        </form>
+    </div>
+@endsection
